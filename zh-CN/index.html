@@ -1,110 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <link rel="alternate" hreflang="zh-CN" href="https://skyshadow.fun/zh-CN" />
-    <link rel="alternate" hreflang="en" href="https://skyshadow.fun/en" />
     <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.png" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在互联网留下一个脚印 | 天影大侠</title>
-    <meta name="keywords" content="天影大侠 脚印">
-    <meta name="description" content="在互联网留下一个脚印！">
-    <meta name="author" content="天影大侠">
-    <script src="/js/load.js"></script>
-    <script src="/js/tailwindcss.js"></script>
-    <!-- 加载动画遮罩  -->
-    <div id="loading-mask" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black transition duration-500 ease-in">
-        <div id="footprints" class="flex flex-col items-center gap-4 relative" style="height: 180px;">
-            <!-- 第一个脚印 -->
-            <svg class="footprint w-12 h-12 opacity-0 absolute right-0 bottom-0 -scale-x-100" aria-hidden="true" style="transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
-            <!-- 第二个脚印 -->
-            <svg class="footprint w-12 h-12 opacity-0 absolute left-0 bottom-[50px]" aria-hidden="true" style="transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
-            <!-- 第三个脚印 -->
-            <svg class="footprint w-12 h-12 opacity-0 absolute right-0 bottom-[100px] -scale-x-100" aria-hidden="true" style="transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
-        </div>
-    </div>
-    <script src="/js/jquery.min.js"></script>
-    <link rel="stylesheet" href="/css/mycss.css">
-    <script src="/iconfont/iconfont.js"></script>
-
-
+    <title>天影大侠</title>
+    <link rel="canonical" href="https://skyshadow.fun/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://skyshadow.fun/" />
+    <link rel="alternate" hreflang="en" href="https://skyshadow.fun/en" />
+    <script>location.replace("/?lang=zh-CN")</script>
 </head>
 <body>
-    <div class="fixed bottom-0 left-0 w-screen h-44 bg-[url(/moon.webp)] bg-bottom bg-no-repeat bg-cover z-4 pointer-events-none">
-    </div>
-    <!-- 地球画布 -->
-    <canvas id="c" class="z-1"></canvas>
-    
-    <!-- 第一屏 -->
-    <section class="hero-section">
-        </div>
-        <div class="scroll-down z-10">
-            <svg class="icon w-8 h-8" aria-hidden="true">
-                <use xlink:href="#icon-xiangxia"></use>
-            </svg>
-        </div>
-    </section>
-    
-    <!-- 第二屏  -->
-    <section class="cursor-pointer select-none profile-section relative z-2 content-center mb-90">
-        <div class="text-white max-w-9/10 container mx-auto flex flex-col items-center justify-center text-center">
-            <img src="/avatar.webp" alt="头像" class="duration-100 ease-in hover:scale-110 active:scale-110 w-48 rounded-full mb-4 shadow-lg/30">
-            <div>
-                <p class="mb-10 -rotate-y-4 rotate-z-346 hover:rotate-y-0 hover:rotate-z-0 hover:scale-110 active:rotate-y-0 active:rotate-z-0 active:scale-110 duration-500 text-2xl text-center text-shadow-lg/30">
-                    我是天影大侠
-                </p>
-                <p class="mb-10 rotate-y-8 rotate-z-3 hover:rotate-y-0 hover:rotate-z-0 hover:scale-110 active:rotate-y-0 active:rotate-z-0 active:scale-110 duration-500 text-2xl text-center text-shadow-lg/30">
-                    一个另一平行世界的Developer
-                </p>
-                <p class="mb-10 rotate-y-0 -rotate-z-3 hover:rotate-y-0 hover:rotate-z-0 hover:scale-110 active:rotate-y-0 active:rotate-z-0 active:scale-110 duration-500 text-lg text-center text-shadow-lg/30">
-                    同时一大一学生，现就读于中南大学应用化学强基专业
-                </p>
-                <div class="mb-30 flex justify-center items-center space-x-4">
-                    <a href="https://blog.skyshadow.fun" target="_blank" class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
-                        <svg class="icon w-8 h-8" aria-hidden="true">
-                            <use xlink:href="#icon-xieboke"></use>
-                        </svg>
-                    </a>
-                    <a href="https://github.com/SkyShadowHero" target="_blank" class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
-                        <svg class="icon w-8 h-8" aria-hidden="true">
-                            <use xlink:href="#icon-github"></use>
-                        </svg>
-                    </a>
-                    <a href="https://wpa.qq.com/msgrd?v=3&uin=3014429800" target="_blank" class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
-                        <svg class="icon w-8 h-8" aria-hidden="true">
-                            <use xlink:href="#icon-QQ"></use>
-                        </svg>
-                    </a>
-                </div>          
-                <p class="mb-10 rotate-y-6 rotate-z-8 hover:scale-110 hover:rotate-y-0 hover:rotate-z-0 active:scale-110 active:rotate-y-0 active:rotate-z-0 duration-300 text-2xl text-center text-shadow-lg/30">
-                    我在互联网留下了一个脚印！
-                </p>
-            </div>
-        </div>
-    </section>
-    <!-- 页脚 -->
-    <footer class="z-5 fixed w-screen h-fit mx-auto mb-0">
-        <div>
-            <p>&copy;2022 - 2026 By 天影大侠</p>
-            <div class="text-center">
-            框架 
-            <a href="https://tailwindcss.com" target="_blank" class="cursor-pointer hover:underline active:underline">Tailwindcss</a> 
-            | 源码 
-            <a href="https://github.com/SkyShadowHero/SkyShadowHero-Space-Themed-Website" target="_blank" class="cursor-pointer hover:underline active:underline">Github Repo</a>
-            </div>
-            <a href="https://icp.gov.moe/?keyword=20253014" target="_blank" class="cursor-pointer hover:underline active:underline">萌ICP备20253014号</a>
-        </div>
-    </footer>
-    <script src="/js/myjs.js"></script>
-    <div id="smooth-cursor" 
-        class="fixed top-0 left-0 z-1 pointer-events-none transition-transform duration-300 ease-out" 
-        style="--x: 50vw; --y: 50vh; --scale: 0; --rotate: 0deg; transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(var(--scale)) rotate(var(--rotate)); will-change: transform;">
-        
-        <svg class="w-8 h-8 text-black drop-shadow-md" aria-hidden="true">
-            <use xlink:href="#icon-huojianjiasu"></use>
-        </svg>
-    </div>
-    <div id="particle-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-1"></div>
-    <script src="/js/rocket.js"></script>
 </body>
 </html>
