@@ -45,11 +45,14 @@ class SmoothCursor {
         };
 
         this.isPulsing = false;
+        this.zoom = 1;
 
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.update = this.update.bind(this);
 
         this.init();
+        // register so other scripts can call setZoom()
+        window._smoothCursor = this;
     }
 
     init() {
@@ -58,6 +61,13 @@ class SmoothCursor {
             this.config.element.style.setProperty('--scale', '1');
         }, { once: true });
         this.update();
+    }
+
+    setZoom(level) {
+        this.zoom = level;
+        this.config.element.style.setProperty('--scale', String(level));
+        this.config.element.style.transition = 'transform 0.8s cubic-bezier(0.22,0.61,0.36,1)';
+        this.state.offsetY = level === 2 ? -300 : 0;
     }
 
     handleMouseMove(e) {
@@ -102,7 +112,7 @@ class SmoothCursor {
         // 更新 CSS
         const style = this.config.element.style;
         style.setProperty('--x', `${position.x}px`);
-        style.setProperty('--y', `${position.y}px`);
+        style.setProperty('--y', `${position.y + (this.state.offsetY || 0)}px`);
         style.setProperty('--rotate', `${this.state.rotation}deg`);
 
         requestAnimationFrame(this.update);
@@ -125,9 +135,12 @@ class SmoothCursor {
     }
 
     createParticleBurst(x, y) {
+        const s = 5 * this.zoom;
         for (let i = 0; i < this.config.particleCount; i++) {
             const particle = document.createElement('div');
             particle.classList.add('particle');
+            particle.style.width = s + 'px';
+            particle.style.height = s + 'px';
 
             const randomColor = this.config.particleColors[Math.floor(Math.random() * this.config.particleColors.length)];
             particle.style.backgroundColor = randomColor;

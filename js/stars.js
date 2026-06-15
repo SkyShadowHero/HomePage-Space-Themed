@@ -30015,7 +30015,8 @@ var cx=cv.getContext("2d");
 var W,H;
 var scrollY=0;
 var PARALLAX=0.04;
-function rs(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
+var MAX_DRAW=2500;
+function rs(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;MAX_DRAW=W<768?800:2500}
 window.addEventListener("resize",rs);
 window.addEventListener("scroll",function(){scrollY=window.scrollY||window.pageYOffset},{passive:true});
 rs();
@@ -30032,7 +30033,7 @@ var offY=-scrollY*PARALLAX;
 offY=((offY%H)+H)%H;
 var drawn=0;
 for(var i=0;i<pos.length;i++){
-if(drawn>=2500)break;
+if(drawn>=MAX_DRAW)break;
 var p=pos[i];
 // Skip stars too dim to ever be visible (even at peak twinkle)
 if(p.bs<0.47)continue;
