@@ -201,7 +201,6 @@ Point.prototype.init = function(location, velocity, theta, phi, ctx){
   this.theta = theta;
   this.phi = phi;
   this.ctx = ctx;
-  this.history = [];
 };
 
 Point.prototype.step = function(neighbors)
