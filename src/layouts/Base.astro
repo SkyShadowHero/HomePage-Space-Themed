@@ -3,6 +3,7 @@ import en from '../locales/en.json';
 import zh from '../locales/zh-CN.json';
 
 const isRoot = !Astro.currentLocale;
+const isEnglishPage = isRoot || Astro.currentLocale === 'en';
 const lang = Astro.currentLocale || 'en';
 const t = lang === 'zh-CN' ? zh : en;
 const { siteTitle, keywords, description, author, greeting, role, bio, footprint, footerBy, frameLabel, sourceLabel, icpText, socialThirdHref, socialThirdIcon, switchToLang } = t;
@@ -12,7 +13,7 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
 <html lang={lang}>
 <head>
     <meta charset="UTF-8" />
-    {isRoot && (
+    {isEnglishPage && (
       <script is:inline>
         (function(){var l=(navigator.language||'').toLowerCase();if(l.indexOf('zh')===0||l.indexOf('cn')>=0)location.replace('/zh-CN/');})();
       </script>
