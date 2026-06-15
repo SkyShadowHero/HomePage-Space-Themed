@@ -13,23 +13,34 @@
 
   // ── 1. 判断语言 ──────────────────────────────────────────
 
+  function isZh() {
+    var lang = (navigator.language || '').toLowerCase();
+    if (lang.indexOf('zh')>=0||lang.indexOf('cn')>=0) return true;
+    var langs = navigator.languages || [];
+    for (var i = 0; i < langs.length; i++) {
+      var l = langs[i].toLowerCase();
+      if (l.indexOf('zh')>=0||l.indexOf('cn')>=0) return true;
+    }
+    return false;
+  }
+
   function detect() {
     var path = location.pathname;
 
-    // URL 路径明确定义语言：/zh-CN/ 或 /en/
-    if (/\/zh-CN(\/|$)/.test(path)) return 'zh-CN';
-    if (/\/en(\/|$)/.test(path)) return 'en';
+    // URL 路径：/zh-CN/ /zh_CN/ /zh/ → 中文,  /en/ → 英文
+    if (/\/(zh[-_]CN|zh)(\/|$)/i.test(path)) return 'zh-CN';
+    if (/\/en(\/|$)/i.test(path)) return 'en';
 
     // URL 查询参数
     var q = new URLSearchParams(location.search).get('lang');
     if (q === 'zh-CN' || q === 'en') return q;
 
-    // Cookie 保存的偏好
+    // 浏览器语言优先
+    if (isZh()) return 'zh-CN';
+
+    // Cookie 偏好（兜底）
     var m = document.cookie.match(new RegExp(LANG_COOKIE + '=([^;]+)'));
     if (m && (m[1] === 'zh-CN' || m[1] === 'en')) return m[1];
-
-    // 浏览器语言（中文浏览器 → 中文）
-    if (navigator.language && navigator.language.indexOf('zh') === 0) return 'zh-CN';
 
     // 默认英文
     return 'en';
@@ -92,10 +103,15 @@
 
   function run() {
     var lang = detect();
+    // 清除旧版 Cookie，避免旧的 lang=en 覆盖浏览器语言
+    document.cookie = 'preferred_lang=;path=/;max-age=0';
+    document.cookie = 'lang=;path=/;max-age=0';
+    console.log('i18n: detected', lang);
     load(lang).then(function (d) {
       apply(lang, d);
-    }).catch(function () {
-      // 回退到英文
+      console.log('i18n: loaded & applied', lang);
+    }).catch(function (e) {
+      console.error('i18n: failed to load', lang, e);
       if (lang !== 'en') {
         load('en').then(function (d) { apply('en', d); });
       }
