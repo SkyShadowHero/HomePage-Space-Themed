@@ -139,12 +139,4 @@ canvas#starfield.to-section3 {
     transform: scale(1);
 }
 
-/* 移动端地球缩小 */
-@media (max-width: 767px) {
-    canvas#c {
-        transform: scale(0.7);
-        transform-origin: center center;
-    }
-}
-
 /* Footer & Moon: 由 JS 直接控制内联样式 */
