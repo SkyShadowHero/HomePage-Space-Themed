@@ -30019,7 +30019,8 @@ var PARALLAX=0.04;
 var MAX_DRAW=2500;
 var pos=[];
 function mkPos(){pos.length=0;for(var i=0;i<starData.length;i++){var s=starData[i];var _bs=Math.max(0.35,Math.min(3.5,(7.5-s[2])*0.45));pos.push({x:Math.random()*W,y:Math.random()*H,m:s[2],b:s[3],idx:i,bs:_bs})}}
-function rs(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);MAX_DRAW=W<768?800:2500;mkPos()}
+var rto,lastW=window.innerWidth;
+function rs(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);MAX_DRAW=W<768?800:2500;if(W!==lastW){lastW=W;clearTimeout(rto);rto=setTimeout(mkPos,300)}}
 window.addEventListener("resize",rs);
 window.addEventListener("scroll",function(){scrollY=window.scrollY||window.pageYOffset},{passive:true});
 rs();
