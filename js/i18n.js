@@ -37,12 +37,12 @@
     var lang = params.get('lang');
     if (lang && SUPPORTED.indexOf(lang) !== -1) return lang;
 
-    // 3. Browser language (优先于 Cookie，避免旧 Cookie 覆盖用户实际语言)
-    if (navigator.language.startsWith('zh')) return 'zh-CN';
-
-    // 4. Cookie（仅当浏览器语言不属于支持列表时兜底）
+    // 3. Cookie（用户语言偏好优先于浏览器语言）
     var m = document.cookie.match(new RegExp(COOKIE_NAME + '=([^;]+)'));
     if (m && SUPPORTED.indexOf(m[1]) !== -1) return m[1];
+
+    // 4. Browser language（首次访问时才用）
+    if (navigator.language.startsWith('zh')) return 'zh-CN';
 
     // 5. Default
     return DEFAULT;
