@@ -30058,6 +30058,13 @@ cx.shadowBlur=sz*2.5;
 cx.beginPath();
 cx.arc(p.x,py,sz,0,Math.PI*2);
 cx.fill();
+// Cross flare for large stars (randomly appears over time)
+if(sz>1.5&&Math.sin(T*0.7+p.idx*1.3)>0.65){
+var fl=sz*(4+(p.idx%7)/3);
+cx.globalAlpha=al*0.22;cx.shadowBlur=0;
+cx.beginPath();cx.moveTo(p.x-fl,py);cx.lineTo(p.x,py-sz*0.2);cx.lineTo(p.x+fl,py);cx.lineTo(p.x,py+sz*0.2);cx.fill();
+cx.beginPath();cx.moveTo(p.x,py-fl);cx.lineTo(p.x-sz*0.2,py);cx.lineTo(p.x,py+fl);cx.lineTo(p.x+sz*0.2,py);cx.fill();
+}
 cx.restore();
 drawn++
 }

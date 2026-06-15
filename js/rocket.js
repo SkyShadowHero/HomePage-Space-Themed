@@ -67,7 +67,9 @@ class SmoothCursor {
         this.zoom = level;
         this.config.element.style.setProperty('--scale', String(level));
         this.config.element.style.transition = 'transform 0.8s cubic-bezier(0.22,0.61,0.36,1)';
-        this.state.offsetY = level === 2 ? -300 : 0;
+        if (level === 2) {
+            this.state.position.y -= 300;
+        }
     }
 
     handleMouseMove(e) {
@@ -112,7 +114,7 @@ class SmoothCursor {
         // 更新 CSS
         const style = this.config.element.style;
         style.setProperty('--x', `${position.x}px`);
-        style.setProperty('--y', `${position.y + (this.state.offsetY || 0)}px`);
+        style.setProperty('--y', `${position.y}px`);
         style.setProperty('--rotate', `${this.state.rotation}deg`);
 
         requestAnimationFrame(this.update);
