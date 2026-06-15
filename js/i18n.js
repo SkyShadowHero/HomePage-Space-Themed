@@ -37,7 +37,7 @@
     var lang = params.get('lang');
     if (lang && SUPPORTED.indexOf(lang) !== -1) return lang;
 
-    // 3. Cookie（用户语言偏好优先于浏览器语言）
+    // 4. Cookie（用户语言偏好优先于浏览器语言）
     var m = document.cookie.match(new RegExp(COOKIE_NAME + '=([^;]+)'));
     if (m && SUPPORTED.indexOf(m[1]) !== -1) return m[1];
 
