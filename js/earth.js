@@ -26,11 +26,11 @@ settings = {
   MAX_SPEED : 0.015,
   MAX_FORCE : 0.10,
   MAX_SIZE : 5,
-  DESIRED_SEPARATION : .5,
+  DESIRED_SEPARATION : 0.8,
   NEIGHBOR_RADIUS : 50,
-  SEPARATION_WEIGHT : 2,
-  ALIGNMENT_WEIGHT : 1,
-  COHESION_WEIGHT : 1
+  SEPARATION_WEIGHT : 2.5,
+  ALIGNMENT_WEIGHT : 0,
+  COHESION_WEIGHT : 0
 };
 
 var PointStyle = {
@@ -178,25 +178,12 @@ Scene.prototype.update = function(time) {
 
   this.draw();
 
-  for (i in this.points) {
-    this.points[i].step();
-  }
+  for (i in this.points) { this.points[i].step(); }
+  for (i in this.clouds) { this.clouds[i].step(this.clouds); }
 
-  this.points.sort(zSort);
-
-  for (i in this.points) {
-    this.points[i].draw();
-  }
-
-  for (i in this.clouds) {
-    this.clouds[i].step(this.clouds);
-  }
-
-  this.clouds.sort(zSort);
-
-  for (i in this.clouds) {
-    this.clouds[i].draw();
-  }
+  var all = this.points.concat(this.clouds);
+  all.sort(zSort);
+  for (i in all) { all[i].draw(); }
 
 };
 
@@ -206,7 +193,7 @@ Scene.prototype.draw = function()
   // 形成拖尾效果的同时保持画布透明，星星背景不会被遮挡
   this.ctx.save();
   this.ctx.globalCompositeOperation = 'destination-out';
-  this.ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+  this.ctx.fillStyle = 'rgba(0, 0, 0, 0.025)';
   this.ctx.fillRect(0, 0, this.width, this.height);
   this.ctx.restore();
 };
@@ -225,6 +212,7 @@ Point.prototype.init = function(location, velocity, theta, phi, ctx){
   this.theta = theta;
   this.phi = phi;
   this.ctx = ctx;
+  this.history = [];
 };
 
 Point.prototype.step = function(neighbors)
@@ -233,12 +221,17 @@ Point.prototype.step = function(neighbors)
   {
     var z = this.pos.z;
     var acceleration = this.flock(neighbors);
+    acceleration.x += (Math.random() - 0.5) * 0.0005;
+    acceleration.y += (Math.random() - 0.5) * 0.0005;
     this.vel.add(acceleration).limit(settings.MAX_SPEED);
+    this.vel.multiply(0.98);
     this.pos.add(this.vel);
     this.pos.z = z;
     this.rotateX(this.vel.x);
     this.rotateY(this.vel.y);
     this.rotateY(settings.ROTATION/2);
+    this.history.push({x:this.pos.x, y:this.pos.y, z:this.pos.z});
+    if(this.history.length > 20) this.history.shift();
   }else{
       this.rotateY(settings.ROTATION);
   }  
@@ -417,6 +410,24 @@ Point.prototype.draw = function(){
 
   if(this.pos.z > 25)
     return;
+
+  // Cloud trail: draw history positions with same Z
+  if(this.type === PointStyle.cloud && this.history.length > 0){
+    for(var h = 0; h < this.history.length; h++){
+      var hp = this.history[h];
+      var hs = settings.FOV/(settings.FOV+hp.z);
+      var hx = (hp.x * hs) + this.ctx.canvas.width/2;
+      var hy = (hp.y * hs) + this.ctx.canvas.height/2;
+      this.ctx.save();
+      this.ctx.globalAlpha = 0.12 * (h / this.history.length);
+      this.ctx.fillStyle = colors[this.type];
+      this.ctx.beginPath();
+      this.ctx.arc(hx, hy, Math.abs(hs*Scales[this.type]), 0, 2*Math.PI);
+      this.ctx.closePath();
+      this.ctx.fill();
+      this.ctx.restore();
+    }
+  }
 
   this.ctx.save();
   this.ctx.fillStyle = colors[this.type];   
