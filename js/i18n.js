@@ -1,190 +1,110 @@
 /**
- * SkyShadowHero i18n — Modern Internationalization
- *
- * Features:
- *   - JSON locale files (locales/{lang}.json)
- *   - Detection chain: URL path → query param → cookie → browser lang
- *   - History API for clean URLs (no ?lang= in the address bar)
- *   - Language switcher with data-lang attribute
- *   - data-i18n for innerHTML, data-i18n-attr for attribute translation
- *   - Lazy async loading with safe fallback
+ * SkyShadowHero i18n — Simple & Reliable
  */
+
 (function () {
   'use strict';
 
-  var SUPPORTED = ['en', 'zh-CN'];
-  var DEFAULT = 'en';
-  var COOKIE_NAME = 'preferred_lang';
-  var COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year
+  var LANG_COOKIE = 'lang';
+  var DICT = {
+    'zh-CN': null,
+    'en': null
+  };
 
-  var currentLocale = DEFAULT;
-  var dictionary = {};
-
-  // ─── Detection ───────────────────────────────────────────────
+  // ── 1. 判断语言 ──────────────────────────────────────────
 
   function detect() {
-    // 1. URL path: /zh-CN/, /en/, /zh-CN, /en
     var path = location.pathname;
-    for (var i = 0; i < SUPPORTED.length; i++) {
-      var l = SUPPORTED[i];
-      if (path === '/' + l || path === '/' + l + '/' || path.indexOf('/' + l + '/') === 0) {
-        return l;
-      }
-    }
 
-    // 2. URL query: ?lang=zh-CN
-    var params = new URLSearchParams(location.search);
-    var lang = params.get('lang');
-    if (lang && SUPPORTED.indexOf(lang) !== -1) return lang;
+    // URL 路径明确定义语言：/zh-CN/ 或 /en/
+    if (/\/zh-CN(\/|$)/.test(path)) return 'zh-CN';
+    if (/\/en(\/|$)/.test(path)) return 'en';
 
-    // 4. Cookie（用户语言偏好优先于浏览器语言）
-    var m = document.cookie.match(new RegExp(COOKIE_NAME + '=([^;]+)'));
-    if (m && SUPPORTED.indexOf(m[1]) !== -1) return m[1];
+    // URL 查询参数
+    var q = new URLSearchParams(location.search).get('lang');
+    if (q === 'zh-CN' || q === 'en') return q;
 
-    // 4. Browser language（首次访问时才用）
-    if (navigator.language.startsWith('zh')) return 'zh-CN';
+    // Cookie 保存的偏好
+    var m = document.cookie.match(new RegExp(LANG_COOKIE + '=([^;]+)'));
+    if (m && (m[1] === 'zh-CN' || m[1] === 'en')) return m[1];
 
-    // 5. Default
-    return DEFAULT;
+    // 浏览器语言（中文浏览器 → 中文）
+    if (navigator.language && navigator.language.indexOf('zh') === 0) return 'zh-CN';
+
+    // 默认英文
+    return 'en';
   }
 
-  // ─── Locale loading ─────────────────────────────────────────
+  // ── 2. 加载翻译文件 ──────────────────────────────────────
 
-  function loadLocale(locale) {
-    var url = '/locales/' + locale + '.json';
-    return fetch(url)
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load ' + url + ' (' + res.status + ')');
-        return res.json();
-      });
+  function load(lang) {
+    return fetch('/locales/' + lang + '.json').then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
   }
 
-  // ─── DOM helpers ────────────────────────────────────────────
+  // ── 3. 应用翻译 ──────────────────────────────────────────
 
-  function setMeta(name, content) {
-    var el = document.querySelector('meta[name="' + name + '"]');
-    if (!el) {
-      el = document.createElement('meta');
-      el.setAttribute('name', name);
-      document.head.appendChild(el);
-    }
-    el.setAttribute('content', content);
-  }
+  function apply(lang, dict) {
+    DICT[lang] = dict;
+    document.documentElement.lang = lang;
 
-  function setLink(rel, hreflang, href) {
-    var el = document.querySelector('link[rel="' + rel + '"][hreflang="' + hreflang + '"]');
-    if (el) el.setAttribute('href', href);
-  }
-
-  // ─── Apply translations ─────────────────────────────────────
-
-  function apply(dict) {
-    dictionary = dict;
-
-    // <html lang>
-    document.documentElement.lang = currentLocale;
-
-    // <title>
+    // title / meta
     if (dict.siteTitle) document.title = dict.siteTitle;
+    setMeta('keywords', dict.keywords);
+    setMeta('description', dict.description);
+    setMeta('author', dict.author);
 
-    // <meta>
-    if (dict.keywords) setMeta('keywords', dict.keywords);
-    if (dict.description) setMeta('description', dict.description);
-    if (dict.author) setMeta('author', dict.author);
-
-    // Update hreflang links (dynamic meta)
-    setLink('alternate', 'en', location.origin + '/');
-    setLink('alternate', 'zh-CN', location.origin + '/zh-CN/');
-
-    // [data-i18n] → innerHTML (backward compatible)
-    var i18nEls = document.querySelectorAll('[data-i18n]');
-    for (var i = 0; i < i18nEls.length; i++) {
-      var el = i18nEls[i];
-      var key = el.getAttribute('data-i18n');
-      if (dict[key] !== undefined) {
-        el.innerHTML = dict[key];
-      }
+    // data-i18n 元素
+    var els = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < els.length; i++) {
+      var k = els[i].getAttribute('data-i18n');
+      if (dict[k] !== undefined) els[i].innerHTML = dict[k];
     }
 
-    // [data-i18n-attr="attr1:key1,attr2:key2"] → attributes
-    var attrEls = document.querySelectorAll('[data-i18n-attr]');
-    for (var j = 0; j < attrEls.length; j++) {
-      var el2 = attrEls[j];
-      var mappings = el2.getAttribute('data-i18n-attr');
-      var pairs = mappings.split(',');
-      for (var k = 0; k < pairs.length; k++) {
-        var parts = pairs[k].split(':').map(function (s) { return s.trim(); });
-        var attr = parts[0];
-        var lookupKey = parts[1] || attr;
-        if (dict[lookupKey] !== undefined) {
-          el2.setAttribute(attr, dict[lookupKey]);
-        }
-      }
-    }
-
-    // Social third link (special handling for id-based elements)
+    // 特殊元素（社交链接）
     if (dict.socialThirdHref) {
-      var link = document.getElementById('social-link-third');
-      if (link) link.href = dict.socialThirdHref;
+      var a = document.getElementById('social-link-third');
+      if (a) a.href = dict.socialThirdHref;
     }
     if (dict.socialThirdIcon) {
-      var icon = document.getElementById('social-icon-third');
-      if (icon) icon.setAttribute('xlink:href', dict.socialThirdIcon);
+      var s = document.getElementById('social-icon-third');
+      if (s) s.setAttribute('xlink:href', dict.socialThirdIcon);
     }
 
-    // Save cookie
-    document.cookie = COOKIE_NAME + '=' + currentLocale + '; path=/; max-age=' + COOKIE_MAX_AGE;
+    // 保存 Cookie
+    document.cookie = LANG_COOKIE + '=' + lang + ';path=/;max-age=31536000';
   }
 
-  // ─── URL management ─────────────────────────────────────────
-
-  function getCleanPath(locale) {
-    return (locale === DEFAULT || locale === 'en') ? '/' : '/' + locale + '/';
+  function setMeta(name, val) {
+    if (!val) return;
+    var m = document.querySelector('meta[name="' + name + '"]');
+    if (!m) {
+      m = document.createElement('meta');
+      m.setAttribute('name', name);
+      document.head.appendChild(m);
+    }
+    m.setAttribute('content', val);
   }
 
-  function updateURL(locale) {
-    var newPath = getCleanPath(locale);
-    // Only replace if URL doesn't already match
-    if (location.pathname !== newPath) {
-      history.replaceState(null, '', newPath);
-    }
-    // Clean up leftover ?lang= from URL
-    if (location.search) {
-      history.replaceState(null, '', location.pathname.replace(/\/+$/, '') + '/');
-    }
-  }
+  // ── 4. 启动 ──────────────────────────────────────────────
 
-  // ─── Init ───────────────────────────────────────────────────
-
-  function init() {
-    currentLocale = detect();
-
-    // If detected from query param, clean the URL immediately
-    if (location.search.indexOf('lang=') !== -1) {
-      var cleanPath = getCleanPath(currentLocale);
-      history.replaceState(null, '', cleanPath);
-    }
-
-    loadLocale(currentLocale).then(function (dict) {
-      apply(dict);
-    })['catch'](function (err) {
-      console.error('i18n: init failed for', currentLocale, err);
-      // Fallback to English
-      if (currentLocale !== DEFAULT) {
-        currentLocale = DEFAULT;
-        loadLocale(DEFAULT).then(function (dict) {
-          apply(dict);
-        })['catch'](function (fallbackErr) {
-          console.error('i18n: fallback also failed', fallbackErr);
-        });
+  function run() {
+    var lang = detect();
+    load(lang).then(function (d) {
+      apply(lang, d);
+    }).catch(function () {
+      // 回退到英文
+      if (lang !== 'en') {
+        load('en').then(function (d) { apply('en', d); });
       }
     });
   }
 
-  // Run when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', run);
   } else {
-    init();
+    run();
   }
 })();
