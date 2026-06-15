@@ -218,8 +218,6 @@ Point.prototype.step = function(neighbors)
     this.rotateX(this.vel.x);
     this.rotateY(this.vel.y);
     this.rotateY(settings.ROTATION/2);
-    this.history.push({x:this.pos.x, y:this.pos.y, z:this.pos.z});
-    if(this.history.length > 20) this.history.shift();
   }else{
       this.rotateY(settings.ROTATION);
   }  
@@ -398,24 +396,6 @@ Point.prototype.draw = function(){
 
   if(this.pos.z > 25)
     return;
-
-  // Cloud trail: draw history positions with same Z
-  if(this.type === PointStyle.cloud && this.history.length > 0){
-    for(var h = 0; h < this.history.length; h++){
-      var hp = this.history[h];
-      var hs = settings.FOV/(settings.FOV+hp.z);
-      var hx = (hp.x * hs) + this.ctx.canvas.width/2;
-      var hy = (hp.y * hs) + this.ctx.canvas.height/2;
-      this.ctx.save();
-      this.ctx.globalAlpha = 0.12 * (h / this.history.length);
-      this.ctx.fillStyle = colors[this.type];
-      this.ctx.beginPath();
-      this.ctx.arc(hx, hy, Math.abs(hs*Scales[this.type]), 0, 2*Math.PI);
-      this.ctx.closePath();
-      this.ctx.fill();
-      this.ctx.restore();
-    }
-  }
 
   this.ctx.save();
   this.ctx.fillStyle = colors[this.type];   
