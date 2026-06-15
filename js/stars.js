@@ -30012,11 +30012,12 @@ cv.id="starfield";
 cv.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0";
 document.body.prepend(cv);
 var cx=cv.getContext("2d");
+var dpr=window.devicePixelRatio||1;
 var W,H;
 var scrollY=0;
 var PARALLAX=0.04;
 var MAX_DRAW=2500;
-function rs(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;MAX_DRAW=W<768?800:2500}
+function rs(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);MAX_DRAW=W<768?800:2500}
 window.addEventListener("resize",rs);
 window.addEventListener("scroll",function(){scrollY=window.scrollY||window.pageYOffset},{passive:true});
 rs();
