@@ -1,17 +1,1 @@
-{
-  "siteTitle": "在互联网留下一个脚印 | 天影大侠",
-  "keywords": "天影大侠 脚印",
-  "description": "在互联网留下一个脚印！",
-  "author": "天影大侠",
-  "greeting": "我是天影大侠",
-  "role": "一个另一平行世界的Developer",
-  "bio": "同时一大一学生，现就读于中南大学应用化学强基专业",
-  "footprint": "我在互联网留下了一个脚印！",
-  "footerBy": "By 天影大侠",
-  "frameLabel": "框架",
-  "sourceLabel": "源码",
-  "icpText": "萌ICP备20253014号",
-  "socialThirdHref": "https://wpa.qq.com/msgrd?v=3&uin=3014429800",
-  "socialThirdIcon": "#icon-QQ",
-  "switchToLang": "English"
-}
+// 此文件已被 Astro 源文件替代，可安全删除。See: src/locales/zh-CN.json

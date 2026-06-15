@@ -2,14 +2,21 @@
 import en from '../locales/en.json';
 import zh from '../locales/zh-CN.json';
 
+const isRoot = !Astro.currentLocale;
 const lang = Astro.currentLocale || 'en';
 const t = lang === 'zh-CN' ? zh : en;
-const { siteTitle, keywords, description, author, greeting, role, bio, footprint, footerBy, frameLabel, sourceLabel, icpText, socialThirdHref, socialThirdIcon } = t;
+const { siteTitle, keywords, description, author, greeting, role, bio, footprint, footerBy, frameLabel, sourceLabel, icpText, socialThirdHref, socialThirdIcon, switchToLang } = t;
+const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
 ---
 <!DOCTYPE html>
 <html lang={lang}>
 <head>
     <meta charset="UTF-8" />
+    {isRoot && (
+      <script is:inline>
+        (function(){var l=(navigator.language||'').toLowerCase();if(l.indexOf('zh')===0||l.indexOf('cn')>=0)location.replace('/zh-CN/');})();
+      </script>
+    )}
     <link rel="alternate" hreflang="en" href="https://skyshadow.fun/" />
     <link rel="alternate" hreflang="zh-CN" href="https://skyshadow.fun/zh-CN/" />
     <link rel="alternate" hreflang="x-default" href="https://skyshadow.fun/" />
@@ -98,7 +105,7 @@ const { siteTitle, keywords, description, author, greeting, role, bio, footprint
     </section>
 
     <footer class="z-5 fixed w-screen h-fit mx-auto mb-0">
-        <div>
+        <div class="relative">
             <p>&copy;2022 - 2026 {footerBy}</p>
             <div class="text-center">
                 {frameLabel}
@@ -107,6 +114,10 @@ const { siteTitle, keywords, description, author, greeting, role, bio, footprint
                 <a href="https://github.com/SkyShadowHero/SkyShadowHero-Space-Themed-Website" target="_blank" class="cursor-pointer hover:underline active:underline">Github Repo</a>
             </div>
             <a href="https://icp.gov.moe/?keyword=20253014" target="_blank" class="cursor-pointer hover:underline active:underline">{icpText}</a>
+            <!-- 语言切换 - 右下角 -->
+            <a href={switchHref} class="absolute right-0 bottom-0 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-white/60 hover:text-white hover:bg-white/20 transition text-sm border border-white/10">
+                🌐 {switchToLang}
+            </a>
         </div>
     </footer>
 
@@ -121,16 +132,5 @@ const { siteTitle, keywords, description, author, greeting, role, bio, footprint
     </div>
     <div id="particle-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-1"></div>
     <script is:inline src="/js/rocket.js"></script>
-    <script is:inline>
-      (function(){
-        var path = location.pathname;
-        if (path === '/' || path === '/index.html') {
-          var lang = (navigator.language||'').toLowerCase();
-          if (lang.indexOf('zh')===0 || lang.indexOf('cn')>=0) {
-            location.replace('/zh-CN/');
-          }
-        }
-      })();
-    </script>
 </body>
 </html>
