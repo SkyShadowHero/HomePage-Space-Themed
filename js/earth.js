@@ -58,8 +58,6 @@ Scene.prototype.init = function(canvas_id) {
 
   this.width = this.canvas.width;
   this.height = this.canvas.height;
-  settings.FOV = this.width < 768 ? 600 : 400;
-
   this.ctx = this.canvas.getContext('2d');
 
   this.points = new Array();
@@ -171,7 +169,6 @@ Scene.prototype.canvasResize = function()
 
   this.width = this.canvas.width;
   this.height = this.canvas.height;
-  settings.FOV = this.width < 768 ? 600 : 400;
 };
 
 Scene.prototype.update = function(time) {
