@@ -176,8 +176,6 @@ Scene.prototype.update = function(time) {
 
   this.current_time = time;
 
-  this.draw();
-
   for (i in this.points) { this.points[i].step(); }
   for (i in this.clouds) { this.clouds[i].step(this.clouds); }
 
@@ -187,16 +185,7 @@ Scene.prototype.update = function(time) {
 
 };
 
-Scene.prototype.draw = function()
-{
-  // 使用 destination-out 合成模式: 每帧淡化旧粒子 15% 透明度，
-  // 形成拖尾效果的同时保持画布透明，星星背景不会被遮挡
-  this.ctx.save();
-  this.ctx.globalCompositeOperation = 'destination-out';
-  this.ctx.fillStyle = 'rgba(0, 0, 0, 0.025)';
-  this.ctx.fillRect(0, 0, this.width, this.height);
-  this.ctx.restore();
-};
+Scene.prototype.draw = function(){};
 
 
 /*
