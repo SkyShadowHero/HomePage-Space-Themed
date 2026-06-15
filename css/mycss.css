@@ -102,9 +102,14 @@ html {
     position: relative;
     overflow: hidden;
 }
-/* Section 2: 顶部 100px 留白 */
+/* Section 2: 顶部留白（移动端 20px，桌面端 50px） */
 #section2 {
-    padding-top: 50px;
+    padding-top: 20px;
+}
+@media (min-width: 768px) {
+    #section2 {
+        padding-top: 50px;
+    }
 }
 /* Section 3: 占位 */
 #section3 {
