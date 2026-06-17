@@ -56,6 +56,8 @@ $(function () {
   if (section2 && starCanvas) {
     var s2obs = new IntersectionObserver(function(entries) {
       var a = entries[0].isIntersecting;
+      // 不干扰 section3 动画
+      if (section3 && section3.getBoundingClientRect().top < window.innerHeight * 0.5) return;
       starCanvas.style.transition = 'transform ' + ease;
       starCanvas.style.transform = a ? 'translateY(-1.5vh)' : 'translateY(0)';
     }, { threshold: 0.3 });
