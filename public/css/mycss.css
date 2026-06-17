@@ -104,8 +104,9 @@ html {
     position: relative;
     overflow: hidden;
 }
-/* Section 2: 顶部留白（移动端 20px，桌面端 50px） */
+/* Section 2: 允许太空垃圾溢出 + 顶部留白 */
 #section2 {
+    overflow: visible;
     padding-top: 20px;
 }
 @media (min-width: 768px) {
@@ -145,5 +146,7 @@ canvas#starfield.to-section3 {
     opacity: 1;
     transform: scale(1);
 }
+
+/* 太空垃圾样式由 skillrubbish.js 内联管理 */
 
 /* Footer & Moon: 由 JS 直接控制内联样式 */
