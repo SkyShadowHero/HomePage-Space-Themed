@@ -3,6 +3,7 @@ body {
     color: #000000;
     min-height: 100vh;
     overflow-x: hidden;
+    max-width: 100%;
 }
 
 canvas {
@@ -51,7 +52,8 @@ footer {
   position: fixed;
   left: 0;
   bottom: 12px;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
 }
 
 

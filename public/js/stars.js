@@ -30018,7 +30018,7 @@ var scrollY=0;
 var PARALLAX=0.04;
 var MAX_DRAW=1500;
 var pos=[];
-function mkPos(){pos.length=0;for(var i=0;i<starData.length;i++){var s=starData[i];var _bs=Math.max(0.35,Math.min(3.5,(7.5-s[2])*0.45));pos.push({x:Math.random()*W,y:Math.random()*H,m:s[2],b:s[3],idx:i,bs:_bs})}}
+function mkPos(){pos.length=0;for(var i=0;i<starData.length;i++){var s=starData[i];var _bs=Math.max(0.18,Math.min(2.0,(7.5-s[2])*0.22));pos.push({x:Math.random()*W,y:Math.random()*H,m:s[2],b:s[3],idx:i,bs:_bs})}}
 var rto,lastW=0;
 function rs(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);MAX_DRAW=W<768?400:1500;if(W!==lastW){lastW=W;clearTimeout(rto);rto=setTimeout(mkPos,300)}}
 window.addEventListener("resize",rs);
@@ -30038,7 +30038,7 @@ for(var i=0;i<pos.length;i++){
 if(drawn>=MAX_DRAW)break;
 var p=pos[i];
 // Skip stars too dim to ever be visible (even at peak twinkle)
-if(p.bs<0.47)continue;
+if(p.bs<0.22)continue;
 var py=p.y+offY;
 if(py>=H)py-=H;
 // Skip stars outside viewport horizontally
@@ -30055,12 +30055,12 @@ cx.save();
 cx.globalAlpha=al;
 cx.fillStyle="rgb("+(cl[0]*255|0)+","+(cl[1]*255|0)+","+(cl[2]*255|0)+")";
 cx.shadowColor=cx.fillStyle;
-cx.shadowBlur=sz*2.5;
+cx.shadowBlur=sz*1.5;
 cx.beginPath();
 cx.arc(p.x,py,sz,0,Math.PI*2);
 cx.fill();
 // Cross flare for large stars (randomly appears over time)
-if(sz>1.5&&Math.sin(T*0.7+p.idx*1.3)>0.65){
+if(sz>0.9&&Math.sin(T*0.7+p.idx*1.3)>0.65){
 var fl=sz*(4+(p.idx%7)/3);
 cx.globalAlpha=al*0.22;cx.shadowBlur=0;
 cx.beginPath();cx.moveTo(p.x-fl,py);cx.lineTo(p.x,py-sz*0.2);cx.lineTo(p.x+fl,py);cx.lineTo(p.x,py+sz*0.2);cx.fill();
