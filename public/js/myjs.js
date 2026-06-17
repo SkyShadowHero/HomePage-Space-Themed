@@ -1,6 +1,5 @@
 /**
- * myjs — 仅保留滚动点击事件
- * 地球动画已迁移至 earth.js
+ * myjs — 滚动点击 + Section 2→3 过渡
  */
 
 $(function () {
