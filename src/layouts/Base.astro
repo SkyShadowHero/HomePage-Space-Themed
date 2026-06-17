@@ -1,6 +1,12 @@
 ---
 import en from '../locales/en.json';
 import zh from '../locales/zh-CN.json';
+import Loading from '../components/Loading.astro';
+import Iconfont from '../components/Iconfont.astro';
+import Stars from '../components/Stars.astro';
+import Earth from '../components/Earth.astro';
+import Transitions from '../components/Transitions.astro';
+import Rocket from '../components/Rocket.astro';
 
 const isRoot = !Astro.currentLocale;
 const isEnglishPage = isRoot || Astro.currentLocale === 'en';
@@ -32,17 +38,17 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
     <script is:inline src="/js/tailwindcss.js"></script>
 </head>
 <body>
-    <!-- loading canvas -->
-    <div id="loading-mask" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black transition duration-500 ease-in">
-        <div id="footprints" class="flex flex-col items-center gap-4 relative" style="height: 180px;">
-            <svg class="footprint w-12 h-12 opacity-0 absolute right-0 bottom-0 -scale-x-100" aria-hidden="true" style="transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
-            <svg class="footprint w-12 h-12 opacity-0 absolute left-0 bottom-[50px]" aria-hidden="true" style="transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
-            <svg class="footprint w-12 h-12 opacity-0 absolute right-0 bottom-[100px] -scale-x-100" aria-hidden="true" style="transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
+    <!-- loading canvas — 纯原生 CSS -->
+    <div id="loading-mask" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.5s ease-in;">
+        <div id="footprints" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:16px;height:180px;">
+            <svg class="footprint" aria-hidden="true" style="width:48px;height:48px;opacity:0;position:absolute;right:0;bottom:0;transform:scaleX(-1);transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
+            <svg class="footprint" aria-hidden="true" style="width:48px;height:48px;opacity:0;position:absolute;left:0;bottom:50px;transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
+            <svg class="footprint" aria-hidden="true" style="width:48px;height:48px;opacity:0;position:absolute;right:0;bottom:100px;transform:scaleX(-1);transition:opacity 0.25s;"><use xlink:href="#icon-footprint"></use></svg>
         </div>
     </div>
-    <script is:inline src="/js/load.js"></script>
+    <Loading />
     <script is:inline src="/js/jquery.min.js"></script>
-    <script is:inline src="/iconfont/iconfont.js"></script>
+    <Iconfont />
 
     <div id="moon-bg" class="fixed bottom-0 left-0 w-full h-44 bg-[url(/moon.webp)] bg-bottom bg-no-repeat bg-cover z-4 pointer-events-none"></div>
     <canvas id="c" class="z-1"></canvas>
@@ -113,9 +119,9 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
         </div>
     </footer>
 
-    <script is:inline src="/js/stars.js"></script>
-    <script is:inline src="/js/earth.js"></script>
-    <script is:inline src="/js/myjs.js"></script>
+    <Stars />
+    <Earth />
+    <Transitions />
 
     <div id="smooth-cursor"
         class="fixed top-0 left-0 z-1 pointer-events-none transition-transform duration-300 ease-out"
@@ -123,6 +129,6 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
         <svg class="w-8 h-8 text-black drop-shadow-md" aria-hidden="true"><use xlink:href="#icon-huojianjiasu"></use></svg>
     </div>
     <div id="particle-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-1"></div>
-    <script is:inline src="/js/rocket.js"></script>
+    <Rocket />
 </body>
 </html>

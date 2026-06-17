@@ -1,0 +1,65 @@
+<script is:inline>
+// Section 2 → 3 过渡 + 滚动点击
+$(function () {
+  $(".scroll-down").click(function () {
+    document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+(function() {
+  'use strict';
+  var ease = '0.8s cubic-bezier(0.22, 0.61, 0.36, 1)';
+  var earthCanvas = document.getElementById('c');
+  var starCanvas = document.getElementById('starfield');
+  var footer = document.querySelector('footer');
+  var moon = document.getElementById('moon-bg');
+  var section3 = document.getElementById('section3');
+  
+  if (!earthCanvas || !starCanvas || !section3) return;
+  
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      var a = entry.isIntersecting;
+      earthCanvas.classList.toggle('to-section3', a);
+      starCanvas.classList.toggle('to-section3', a);
+      // 进入 section3 时清除 1→2 的内联 transform，交给 CSS class
+      if (a) {
+        earthCanvas.style.transform = '';
+        starCanvas.style.transform = '';
+      }
+      
+      if (footer) {
+        if (a) {
+          footer.style.transition = 'transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.3s ease';
+          footer.style.transform = 'translateY(100%)';
+          footer.style.opacity = '0';
+        } else {
+          footer.style.transition = 'transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) 0.5s, opacity 0.3s ease 0.5s';
+          footer.style.transform = 'none';
+          footer.style.opacity = '1';
+        }
+      }
+      if (moon) {
+        moon.style.transition = 'transform ' + ease;
+        moon.style.transform = a ? 'translateY(100%)' : 'none';
+      }
+      var s3t = document.getElementById('section3-text');
+      if (s3t) s3t.classList.toggle('play', a);
+      if (window._smoothCursor) window._smoothCursor.setZoom(a ? 2 : 1);
+    });
+  }, { threshold: 0.5 });
+  
+  observer.observe(section3);
+
+  // Section 1 → 2: 星星 Y 轴微滑
+  var section2 = document.getElementById('section2');
+  if (section2 && starCanvas) {
+    var s2obs = new IntersectionObserver(function(entries) {
+      var a = entries[0].isIntersecting;
+      starCanvas.style.transition = 'transform ' + ease;
+      starCanvas.style.transform = a ? 'translateY(-1.5vh)' : 'translateY(0)';
+    }, { threshold: 0.3 });
+    s2obs.observe(section2);
+  }
+})();
+</script>
