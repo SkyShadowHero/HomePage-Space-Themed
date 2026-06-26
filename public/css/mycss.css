@@ -1,5 +1,6 @@
 body {
     color: #000000;
+    background: #05060a;
     min-height: 100vh;
     overflow-x: hidden;
 }
@@ -50,7 +51,7 @@ footer {
   position: fixed;
   left: 0;
   bottom: 12px;
-  width: 100vw;
+  width: 100%;
 }
 
 
