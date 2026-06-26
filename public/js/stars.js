@@ -30004,7 +30004,7 @@ const starData = [
   [9.2077, 58.7116, 7.76, 1.043]
 ];
 
-// --- v3 FULL-SKY with scroll parallax ---
+// --- v5 MINIMAL: precomputed colour strings, no glow, no flare, no alpha, brightness-sorted subset ---
 (function(){
 "use strict";
 var cv=document.createElement("canvas");
@@ -30016,60 +30016,86 @@ var dpr=window.devicePixelRatio||1;
 var W,H;
 var scrollY=0;
 var PARALLAX=0.04;
-var MAX_DRAW=1500;
-var pos=[];
-function mkPos(){pos.length=0;for(var i=0;i<starData.length;i++){var s=starData[i];var _bs=Math.max(0.18,Math.min(2.0,(7.5-s[2])*0.22));pos.push({x:Math.random()*W,y:Math.random()*H,m:s[2],b:s[3],idx:i,bs:_bs})}}
+var MAX_DRAW=800;
+
+// Pre-select brightest stars
+var sortedIndices=[];
+for(var i=0;i<starData.length;i++) sortedIndices.push(i);
+sortedIndices.sort(function(a,b){return starData[a][2]-starData[b][2]});
+
+// Pre-built per-star data (only for the selected subset)
+var starX=[],starY=[],starBS=[],starF=[],starA=[],starP=[],starF2=[],starP2=[],starCol=[];
+var TAU=Math.PI*2;
+
+function buildStars(){
+  starX.length=0;starY.length=0;starBS.length=0;
+  starF.length=0;starA.length=0;starP.length=0;starF2.length=0;starP2.length=0;starCol.length=0;
+  for(var j=0;j<MAX_DRAW&&j<sortedIndices.length;j++){
+    var i=sortedIndices[j];
+    var s=starData[i], mg=s[2];
+    var bs=Math.max(0.22,Math.min(2.0,(7.5-mg)*0.22));
+    var fq,ap;
+    if(mg<0){fq=1.5+Math.random()*1.5;ap=1.0}
+    else if(mg<1){fq=1.2+Math.random()*1.2;ap=0.95}
+    else if(mg<2){fq=1.0+Math.random()*1.0;ap=0.92}
+    else if(mg<3){fq=0.7+Math.random()*0.8;ap=0.90}
+    else if(mg<4){fq=0.5+Math.random()*0.6;ap=0.88}
+    else if(mg<5){fq=0.4+Math.random()*0.5;ap=0.87}
+    else if(mg<6){fq=0.3+Math.random()*0.4;ap=0.87}
+    else{fq=0.2+Math.random()*0.3;ap=0.87}
+    var b=s[3],r2,g2,b2;
+    if(b<-0.3){r2=0.55;g2=0.75;b2=1.0}
+    else if(b<-0.1){r2=0.6;g2=0.8;b2=1.0}
+    else if(b<0.1){r2=0.75;g2=0.85;b2=1.0}
+    else if(b<0.3){r2=0.9;g2=0.9;b2=0.95}
+    else if(b<0.5){r2=1.0;g2=0.95;b2=0.8}
+    else if(b<0.8){r2=1.0;g2=0.85;b2=0.6}
+    else if(b<1.2){r2=1.0;g2=0.7;b2=0.4}
+    else{r2=1.0;g2=0.5;b2=0.2}
+    starX.push(Math.random()*W);
+    starY.push(Math.random()*H);
+    starBS.push(bs);
+    starF.push(fq); starA.push(ap); starP.push(Math.random()*TAU);
+    starF2.push(fq*1.73); starP2.push(starP[starP.length-1]*0.7);
+    starCol.push("rgb("+(r2*255|0)+","+(g2*255|0)+","+(b2*255|0)+")");
+  }
+}
+
 var rto,lastW=0;
-function rs(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);MAX_DRAW=W<768?400:1500;if(W!==lastW){lastW=W;clearTimeout(rto);rto=setTimeout(mkPos,300)}}
+function rs(){
+  W=window.innerWidth;H=window.innerHeight;
+  cv.width=W*dpr;cv.height=H*dpr;
+  cv.style.width=W+"px";cv.style.height=H+"px";
+  cx.setTransform(dpr,0,0,dpr,0,0);
+  MAX_DRAW=W<768?200:800;
+  if(W!==lastW){lastW=W;clearTimeout(rto);rto=setTimeout(buildStars,300);}
+}
 window.addEventListener("resize",rs);
 window.addEventListener("scroll",function(){scrollY=window.scrollY||window.pageYOffset},{passive:true});
 rs();
-var Tp=[];
-for(var i=0;i<starData.length;i++){var mg=starData[i][2];var fq,ap;if(mg<0){fq=1.5+Math.random()*1.5;ap=1.0}else if(mg<1){fq=1.2+Math.random()*1.2;ap=0.95}else if(mg<2){fq=1.0+Math.random()*1.0;ap=0.92}else if(mg<3){fq=0.7+Math.random()*0.8;ap=0.90}else if(mg<4){fq=0.5+Math.random()*0.6;ap=0.88}else if(mg<5){fq=0.4+Math.random()*0.5;ap=0.87}else if(mg<6){fq=0.3+Math.random()*0.4;ap=0.87}else{fq=0.2+Math.random()*0.3;ap=0.87}Tp.push({f:fq,a:ap,p:Math.random()*Math.PI*2})}
-function bv2(b){var r2,g2,b2;if(b<-0.3){r2=0.55;g2=0.75;b2=1.0}else if(b<-0.1){r2=0.6;g2=0.8;b2=1.0}else if(b<0.1){r2=0.75;g2=0.85;b2=1.0}else if(b<0.3){r2=0.9;g2=0.9;b2=0.95}else if(b<0.5){r2=1.0;g2=0.95;b2=0.8}else if(b<0.8){r2=1.0;g2=0.85;b2=0.6}else if(b<1.2){r2=1.0;g2=0.7;b2=0.4}else{r2=1.0;g2=0.5;b2=0.2}return[r2,g2,b2]}
+
 function draw(t){
-cx.fillStyle="#05060a";cx.fillRect(0,0,W,H);
-var T=t*0.001;
-var offY=-scrollY*PARALLAX;
-// Wrap vertical offset so the star field tiles infinitely
-offY=((offY%H)+H)%H;
-var drawn=0;
-for(var i=0;i<pos.length;i++){
-if(drawn>=MAX_DRAW)break;
-var p=pos[i];
-// Skip stars too dim to ever be visible (even at peak twinkle)
-if(p.bs<0.22)continue;
-var py=p.y+offY;
-if(py>=H)py-=H;
-// Skip stars outside viewport horizontally
-if(p.x<-5||p.x>W+5)continue;
-var twi=Tp[p.idx];
-var twl=1+Math.sin(T*twi.f+twi.p)*twi.a+Math.sin(T*twi.f*1.73+twi.p*0.7)*twi.a*0.15;
-var br=Math.min(1.5,Math.max(0,twl));
-var sz=p.bs*(1+(br-1)*0.15);
-// Skip stars too small to see
-if(sz<0.5)continue;
-var cl=bv2(p.b);
-var al=Math.min(1,br);
-cx.save();
-cx.globalAlpha=al;
-cx.fillStyle="rgb("+(cl[0]*255|0)+","+(cl[1]*255|0)+","+(cl[2]*255|0)+")";
-cx.shadowColor=cx.fillStyle;
-cx.shadowBlur=sz*1.5;
-cx.beginPath();
-cx.arc(p.x,py,sz,0,Math.PI*2);
-cx.fill();
-// Cross flare for large stars (randomly appears over time)
-if(sz>0.9&&Math.sin(T*0.7+p.idx*1.3)>0.65){
-var fl=sz*(4+(p.idx%7)/3);
-cx.globalAlpha=al*0.22;cx.shadowBlur=0;
-cx.beginPath();cx.moveTo(p.x-fl,py);cx.lineTo(p.x,py-sz*0.2);cx.lineTo(p.x+fl,py);cx.lineTo(p.x,py+sz*0.2);cx.fill();
-cx.beginPath();cx.moveTo(p.x,py-fl);cx.lineTo(p.x-sz*0.2,py);cx.lineTo(p.x,py+fl);cx.lineTo(p.x+sz*0.2,py);cx.fill();
+  var T=t*0.001;
+  var offY=-scrollY*PARALLAX;
+  offY=((offY%H)+H)%H;
+
+  cx.fillStyle="#05060a";cx.fillRect(0,0,W,H);
+
+  for(var j=0,len=starX.length;j<len;j++){
+    var px=starX[j];
+    var py=starY[j]+offY;
+    if(py>=H)py-=H;
+    if(py<-5||py>H+5||px<-5||px>W+5)continue;
+
+    var f=starF[j],f2=starF2[j],a=starA[j],p=starP[j],p2=starP2[j];
+    var twl=1+Math.sin(T*f+p)*a+Math.sin(T*f2+p2)*a*0.15;
+    var sz=starBS[j]*(0.85+twl*0.15);
+    if(sz<0.5)continue;
+
+    cx.fillStyle=starCol[j];
+    cx.beginPath();cx.arc(px,py,sz,0,TAU);cx.fill();
+  }
+  requestAnimationFrame(draw);
 }
-cx.restore();
-drawn++
-}
-requestAnimationFrame(draw)
-}
-requestAnimationFrame(draw)
+requestAnimationFrame(draw);
 })();
