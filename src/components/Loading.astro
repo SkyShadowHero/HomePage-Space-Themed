@@ -1,5 +1,5 @@
 <script is:inline>
-// 脚印加载动画
+// 脚印加载动画：最少展示 1 秒，最多等待 6 秒（资源挂起也强制隐藏）
 window.addEventListener('DOMContentLoaded', function() {
   const fps = document.querySelectorAll('#footprints .footprint');
   let step = 0;
@@ -9,11 +9,21 @@ window.addEventListener('DOMContentLoaded', function() {
     });
     step = (step + 1) % 3;
   }
-  let timer = setInterval(animateFootprints, 350);
-  animateFootprints();
 
-  let minShow = false, loaded = false;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let timer = null;
+  if (reduceMotion) {
+    fps.forEach(fp => { fp.style.opacity = '1'; });
+  } else {
+    timer = setInterval(animateFootprints, 350);
+    animateFootprints();
+  }
+
+  let minShow = false, loaded = false, hidden = false;
   function hideLoadingMask() {
+    if (hidden) return;
+    hidden = true;
+    if (timer) clearInterval(timer);
     const mask = document.getElementById('loading-mask');
     if (mask) {
       mask.style.opacity = '0';
@@ -22,20 +32,18 @@ window.addEventListener('DOMContentLoaded', function() {
       }, 500);
     }
   }
+
+  // 最少展示 1 秒
   setTimeout(() => {
     minShow = true;
-    if (loaded) {
-      clearInterval(timer);
-      hideLoadingMask();
-    }
-  }, 2000);
+    if (loaded) hideLoadingMask();
+  }, 1000);
+  // 最多等待 6 秒：即使 window.load 迟迟不来也强制隐藏
+  setTimeout(hideLoadingMask, 6000);
 
   window.addEventListener('load', function() {
     loaded = true;
-    if (minShow) {
-      clearInterval(timer);
-      hideLoadingMask();
-    }
+    if (minShow) hideLoadingMask();
   });
 });
 </script>

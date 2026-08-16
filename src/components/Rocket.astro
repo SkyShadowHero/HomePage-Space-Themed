@@ -47,6 +47,7 @@ class SmoothCursor {
 
         this.isPulsing = false;
         this.zoom = 1;
+        this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.update = this.update.bind(this);
@@ -120,7 +121,7 @@ class SmoothCursor {
     }
 
     tryRandomPulse() {
-        if (!this.isPulsing && Math.random() < this.config.pulseChance) {
+        if (!this.isPulsing && !this.reducedMotion && Math.random() < this.config.pulseChance) {
             this.isPulsing = true;
 
             const angle = Math.random() * 2 * Math.PI;

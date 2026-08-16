@@ -573,4 +573,8 @@ function zSort (a, b) {
       
 window.onload = function() {
   initialize();
+  // prefers-reduced-motion: 只保留静态一帧，不启动动画循环
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    scene.disable();
+  }
 };

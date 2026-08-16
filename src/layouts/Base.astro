@@ -1,6 +1,7 @@
 ---
 import en from '../locales/en.json';
 import zh from '../locales/zh-CN.json';
+import '../styles/global.css';
 import Loading from '../components/Loading.astro';
 import Iconfont from '../components/Iconfont.astro';
 import Stars from '../components/Stars.astro';
@@ -12,8 +13,7 @@ const isRoot = !Astro.currentLocale;
 const isEnglishPage = isRoot || Astro.currentLocale === 'en';
 const lang = Astro.currentLocale || 'en';
 const t = lang === 'zh-CN' ? zh : en;
-const { siteTitle, keywords, description, author, greeting, role, bio, footprint, footerBy, frameLabel, sourceLabel, icpText, socialThirdHref, socialThirdIcon, switchToLang } = t;
-const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
+const { siteTitle, keywords, description, author, greeting, role, bio, footprint, footerBy, frameLabel, sourceLabel, icpText, socialThirdHref, socialThirdIcon, socialThirdLabel, blogLabel, githubLabel } = t;
 ---
 <!DOCTYPE html>
 <html lang={lang}>
@@ -21,21 +21,20 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
     <meta charset="UTF-8" />
     {isEnglishPage && (
       <script is:inline>
-        (function(){var l=(navigator.language||'').toLowerCase();if(l.indexOf('zh')===0||l.indexOf('cn')>=0)location.replace('/zh-CN/');})();
+        (function(){var l=(navigator.language||'').toLowerCase();var simplified=l.indexOf('zh')===0&&l.indexOf('tw')<0&&l.indexOf('hk')<0&&l.indexOf('hant')<0;if(simplified)location.replace('/zh-CN/');})();
       </script>
     )}
     <link rel="alternate" hreflang="en" href="https://skyshadow.fun/" />
     <link rel="alternate" hreflang="zh-CN" href="https://skyshadow.fun/zh-CN/" />
     <link rel="alternate" hreflang="x-default" href="https://skyshadow.fun/" />
     <link rel="canonical" href="https://skyshadow.fun/" />
-    <link rel="icon" href="/favicon.png" type="/image/x-icon" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{siteTitle}</title>
     <meta name="keywords" content={keywords} />
     <meta name="description" content={description} />
     <meta name="author" content={author} />
     <link rel="stylesheet" href="/css/mycss.css" />
-    <script is:inline src="/js/tailwindcss.js"></script>
     <meta name="ocs-site-verification" content="dbe66600db8f705b6b2307baf96f77c4" />
 </head>
 <body>
@@ -48,7 +47,6 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
         </div>
     </div>
     <Loading />
-    <script is:inline src="/js/jquery.min.js"></script>
     <Iconfont />
 
     <div id="moon-bg" class="fixed bottom-0 left-0 w-full h-44 bg-[url(/moon.webp)] bg-bottom bg-no-repeat bg-cover z-4 pointer-events-none"></div>
@@ -68,11 +66,11 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
 
         <div class="relative w-full h-full flex flex-col items-center justify-center text-white z-10">
             <div class="max-w-9/10 container mx-auto flex flex-col items-center justify-center text-center">
-                <img src="/avatar.webp" alt="avatar" class="duration-100 ease-in hover:scale-110 active:scale-110 w-48 rounded-full mb-4 shadow-lg/30" />
+                <img src="/avatar.webp" alt={author} width="192" height="192" class="duration-100 ease-in hover:scale-110 active:scale-110 w-48 rounded-full mb-4 shadow-lg/30" />
                 <div>
-                    <p class="mb-4 md:mb-10 -rotate-y-4 rotate-z-346 hover:rotate-y-0 hover:rotate-z-0 hover:scale-110 active:rotate-y-0 active:rotate-z-0 active:scale-110 duration-500 text-2xl text-center text-shadow-lg/30">
+                    <h1 class="mb-4 md:mb-10 -rotate-y-4 rotate-z-346 hover:rotate-y-0 hover:rotate-z-0 hover:scale-110 active:rotate-y-0 active:rotate-z-0 active:scale-110 duration-500 text-2xl text-center text-shadow-lg/30">
                         {greeting}
-                    </p>
+                    </h1>
                     <p class="mb-4 md:mb-10 rotate-y-8 rotate-z-3 hover:rotate-y-0 hover:rotate-z-0 hover:scale-110 active:rotate-y-0 active:rotate-z-0 active:scale-110 duration-500 text-2xl text-center text-shadow-lg/30">
                         {role}
                     </p>
@@ -80,13 +78,13 @@ const switchHref = lang === 'zh-CN' ? '/en/' : '/zh-CN/';
                         {bio}
                     </p>
                     <div class="mb-5 flex justify-center items-center space-x-4">
-                        <a href="https://blog.skyshadow.fun" target="_blank" class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
+                        <a href="https://blog.skyshadow.fun" target="_blank" aria-label={blogLabel} class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
                             <svg class="icon w-8 h-8" aria-hidden="true"><use xlink:href="#icon-xieboke"></use></svg>
                         </a>
-                        <a href="https://github.com/SkyShadowHero" target="_blank" class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
+                        <a href="https://github.com/SkyShadowHero" target="_blank" aria-label={githubLabel} class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
                             <svg class="icon w-8 h-8" aria-hidden="true"><use xlink:href="#icon-github"></use></svg>
                         </a>
-                        <a id="social-link-third" href={socialThirdHref} target="_blank" class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
+                        <a id="social-link-third" href={socialThirdHref} target="_blank" aria-label={socialThirdLabel} class="transition duration-300 hover:scale-150 hover:-translate-y-3 active:scale-150 active:-translate-y-3 ease-out">
                             <svg class="icon w-8 h-8" aria-hidden="true"><use id="social-icon-third" xlink:href={socialThirdIcon}></use></svg>
                         </a>
                     </div>

@@ -137,3 +137,32 @@ canvas#starfield.to-section3 {
 }
 
 /* Footer & Moon: 由 JS 直接控制内联样式 */
+
+/* 降低动态效果偏好：关闭装饰性动画与过渡 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+    html {
+        scroll-snap-type: none;
+        scroll-behavior: auto;
+    }
+    .scroll-down {
+        animation: none;
+    }
+    .particle {
+        animation: none;
+        opacity: 0;
+    }
+    canvas#c,
+    canvas#starfield {
+        transition: none;
+    }
+    #section3-text {
+        transition: none;
+    }
+}

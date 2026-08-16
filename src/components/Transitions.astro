@@ -1,9 +1,7 @@
 <script is:inline>
 // Section 2 → 3 过渡 + 滚动点击
-$(function () {
-  $(".scroll-down").click(function () {
-    document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
-  });
+document.querySelector('.scroll-down')?.addEventListener('click', function () {
+  document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
 });
 
 (function() {

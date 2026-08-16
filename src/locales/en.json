@@ -13,5 +13,7 @@
   "icpText": "MoeICP20253014",
   "socialThirdHref": "https://x.com/SkyShadowHero",
   "socialThirdIcon": "#icon-X",
-  "switchToLang": "中文"
+  "blogLabel": "Blog",
+  "githubLabel": "GitHub",
+  "socialThirdLabel": "X"
 }
